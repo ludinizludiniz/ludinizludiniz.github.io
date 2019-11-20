@@ -7,3 +7,13 @@ $(document).ready(function () {
 window.onload = function () {
     console.log("window is loaded");
 };
+
+function page01() {
+    $("#page02").hide();
+    $("#page01").show();
+}
+
+function page02() {
+    $("#page01").hide();
+    $("#page02").show();
+}

@@ -22,7 +22,7 @@
         style="background-color: #1a1a1a;">
         <a class="navbar-brand mr-auto" href="#">♕ Oficina do Corte ♛</a>
 
-        <button class="navbar-toggler d-block" type="button" id="navToggle">
+        <button class="navbar-toggler d-block" onclick="page01()" type="button" id="navToggle">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -70,21 +70,21 @@
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <img src="images/oficina1.jpg" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
+                    <div class="carousel-caption d-none d-md-block" onclick="page01()">
                         <h5>First slide label</h5>
                         <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <img src="images/oficina2.jpg" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
+                    <div class="carousel-caption d-none d-md-block" onclick="page01()">
                         <h5>Second slide label</h5>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <img src="images/oficina3.jpg" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
+                    <div class="carousel-caption d-none d-md-block" onclick="page01()">
                         <h5>Third slide label</h5>
                         <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
                     </div>
@@ -103,16 +103,34 @@
 
 -->
 
-    <div class="container-fluid">
-        <button type="button" class="btn btn-dark btn-block">✁ Terça-Feira</button>
-        <button type="button" class="btn btn-secondary btn-block">✁ Quarta-Feira</button>
-        <button type="button" class="btn btn-dark btn-block">✁ Quinta-Feira</button>
-        <button type="button" class="btn btn-secondary btn-block">✁ Sexta-Feira</button>
-        <button type="button" class="btn btn-dark btn-block">✁ Sábado</button>
+    <div class="container-fluid" id="page01">
+        <button type="button" class="btn btn-dark btn-block" onclick="page02()">✁ Terça-Feira</button>
+        <button type="button" class="btn btn-secondary btn-block" onclick="page02()">✁ Quarta-Feira</button>
+        <button type="button" class="btn btn-dark btn-block" onclick="page02()">✁ Quinta-Feira</button>
+        <button type="button" class="btn btn-secondary btn-block" onclick="page02()">✁ Sexta-Feira</button>
+        <button type="button" class="btn btn-dark btn-block" onclick="page02()">✁ Sábado</button>
     </div>
 
+    <br>
 
-
+    <div class="container-fluid" id="page02" style="display: none">
+        <div class="row">
+            <div class="col-6">
+                <button type="button" class="btn btn-dark btn-block" onclick="page01()">✁ 16:00</button>
+                <button type="button" class="btn btn-outline-danger btn-block" onclick="page01()" disabled>✁ 17:00</button>
+                <button type="button" class="btn btn-dark btn-block" onclick="page01()">✁ 18:00</button>
+                <button type="button" class="btn btn-secondary btn-block" onclick="page01()">✁ 19:00</button>
+                <button type="button" class="btn btn-dark btn-block" onclick="page01()">✁ 20:00</button>
+            </div>
+            <div class="col-6">
+                <button type="button" class="btn btn-dark btn-block" onclick="page01()">✁ 16:30</button>
+                <button type="button" class="btn btn-outline-danger btn-block" onclick="page01()" disabled>✁ 17:30</button>
+                <button type="button" class="btn btn-outline-danger btn-block" onclick="page01()" disabled>✁ 18:30</button>
+                <button type="button" class="btn btn-secondary btn-block" onclick="page01()">✁ 19:30</button>
+                <button type="button" class="btn btn-dark btn-block" onclick="page01()">✁ 20:30</button>
+            </div>
+        </div>
+    </div>
 
     <div class="container text-center">
 
