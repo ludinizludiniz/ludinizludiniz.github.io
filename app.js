@@ -240,4 +240,26 @@ function motarGrafico() {
         ],
         formatter: function (x) { return x + "%"}
     });
+
+
+    var table = $('#table_dashboard');
+    table.find("tbody tr").remove();
+
+    let data = moment();
+
+    $("#text_dashboard").text(data.format('dddd D MMM'))
+
+    // Referencia para o nó configuracao
+    //ref = firebase.database().ref('agendamentos'.concat('/', data.format('D'), '/', data.format('M')));
+    ref = firebase.database().ref('agendamentos'.concat('/', data.format('YYYY'), '/', data.format('M')))
+    // Obter Dados
+    ref.orderByChild("hora").once('value').then(snapshot => {
+        // checa se existe algo no snapshot * ao invez de ver se é null
+        if(snapshot.exists()) {
+            snapshot.forEach(value => {
+                let current = value.val();
+                table.append('<tr><td>' + current.nome + '</td><td>' + current.hora + '</td></tr>');
+            });
+        }
+    }); 
 }
