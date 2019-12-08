@@ -216,11 +216,13 @@ function exibirPagina(paginaVisivel) {
     $("#page01").hide();
     $("#divHoras").hide();
     $("#divDashboard").hide();
+    $("#divConfig").hide();
 
     $("#" + paginaVisivel).show();
 }
 
 function motarGrafico() {
+    $('.offcanvas-collapse').toggleClass('open')
     exibirPagina('divDashboard');
     $("#imagemPrincipal").hide();
 
@@ -262,4 +264,12 @@ function motarGrafico() {
             });
         }
     }); 
+}
+
+function montarConfig(){
+    $('.offcanvas-collapse').toggleClass('open')
+
+    exibirPagina('divConfig');
+    $("#imagemPrincipal").hide();
+
 }
