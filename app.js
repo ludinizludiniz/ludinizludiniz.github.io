@@ -68,6 +68,9 @@ function obterConficuracoes(map) {
     ref.once('value').then(snapshot => {
         snapshot.forEach(value => {
             let dia_config = value.val();
+
+            $("#checkbox_" + dia_config.descricao).prop( "checked", dia_config.habilitado ).change();
+            
             habilitarDesbilitarBtn("btn_" + value.key, dia_config.habilitado);
             if(!dia_config.habilitado) {
                return;
