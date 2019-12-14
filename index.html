@@ -43,6 +43,16 @@
     <img src="images/oficina1.jpg" class="img-fluid" alt="♕ Oficina do Corte ♛" id="imagemPrincipal">
 
     <div class="container-fluid mt-1" id="page01">
+
+        <div id="load_page01">
+            <div class="d-flex justify-content-center" >
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+
         <button id="btn_segunda" type="button" class="d-none btn btn-secondary btn-block"></button>
         <button id="btn_terca" type="button" class="d-none btn btn-dark btn-block"></button>
         <button id="btn_quarta" type="button" class="d-none btn btn-secondary btn-block"></button>
@@ -77,8 +87,8 @@
                 <p class="text-center" id="text_dashboard"></p>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="montarTableAgendamentos(false, false);">Anterior</a></li>
+                        <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="montarTableAgendamentos(false, true);">Próximo</a></li>
                     </ul>
                 </nav>
                 <table class="table table-bordered table-dark" id="table_dashboard">
@@ -98,7 +108,15 @@
 
     <div class="container-fluid mt-1" id="divConfig" style="display: none;">
         <div class="row">
+            
             <div class="col-12">
+                <br />
+                <div class="row">
+                    <div class="col text-center">
+                        <button class="btn btn-success btn-block">Salvar</button>
+                    </div>
+                </div>
+                <br />
                 <label class="checkbox">
                 <input type="checkbox" data-toggle="toggle" data-onstyle="dark" id="checkbox_Segunda-feira"> Segunda-feira
                 </label>
@@ -106,6 +124,8 @@
                     <div class="col-6">
                         <select class="custom-select">
                         <option selected>Inicio</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
                         <option value="10:00">10:00</option>
                         <option value="11:00">11:00</option>
                         <option value="12:00">12:00</option>
@@ -117,6 +137,8 @@
                         <option value="16:00">16:00</option>
                         <option value="17:00">17:00</option>
                         <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
                         </select>
                     </div>
                 </div>
@@ -128,6 +150,8 @@
                     <div class="col-6">
                         <select class="custom-select">
                         <option selected>Inicio</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
                         <option value="10:00">10:00</option>
                         <option value="11:00">11:00</option>
                         <option value="12:00">12:00</option>
@@ -139,6 +163,8 @@
                         <option value="16:00">16:00</option>
                         <option value="17:00">17:00</option>
                         <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
                         </select>
                     </div>
                 </div>
@@ -150,6 +176,8 @@
                     <div class="col-6">
                         <select class="custom-select">
                         <option selected>Inicio</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
                         <option value="10:00">10:00</option>
                         <option value="11:00">11:00</option>
                         <option value="12:00">12:00</option>
@@ -161,6 +189,8 @@
                         <option value="16:00">16:00</option>
                         <option value="17:00">17:00</option>
                         <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
                         </select>
                     </div>
                 </div>
@@ -172,6 +202,8 @@
                     <div class="col-6">
                         <select class="custom-select">
                         <option selected>Inicio</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
                         <option value="10:00">10:00</option>
                         <option value="11:00">11:00</option>
                         <option value="12:00">12:00</option>
@@ -183,6 +215,8 @@
                         <option value="16:00">16:00</option>
                         <option value="17:00">17:00</option>
                         <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
                         </select>
                     </div>
                 </div>
@@ -194,6 +228,8 @@
                     <div class="col-6">
                         <select class="custom-select">
                         <option selected>Inicio</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
                         <option value="10:00">10:00</option>
                         <option value="11:00">11:00</option>
                         <option value="12:00">12:00</option>
@@ -205,6 +241,8 @@
                         <option value="16:00">16:00</option>
                         <option value="17:00">17:00</option>
                         <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
                         </select>
                     </div>
                 </div>
@@ -216,6 +254,8 @@
                     <div class="col-6">
                         <select class="custom-select">
                         <option selected>Inicio</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
                         <option value="10:00">10:00</option>
                         <option value="11:00">11:00</option>
                         <option value="12:00">12:00</option>
@@ -227,6 +267,8 @@
                         <option value="16:00">16:00</option>
                         <option value="17:00">17:00</option>
                         <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
                         </select>
                     </div>
                 </div>
@@ -238,6 +280,8 @@
                     <div class="col-6">
                         <select class="custom-select">
                         <option selected>Inicio</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
                         <option value="10:00">10:00</option>
                         <option value="11:00">11:00</option>
                         <option value="12:00">12:00</option>
@@ -249,9 +293,12 @@
                         <option value="16:00">16:00</option>
                         <option value="17:00">17:00</option>
                         <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
                         </select>
                     </div>
                 </div>
+                <br />
             </div>
         </div>
     </div>
@@ -272,10 +319,11 @@
                 <p class="text-center font-weight-bold" id="txt_dia_modal"></p>
                 <input type="text" class="form-control mt-1" placeholder="Nome..." id="txt_nome_modal">
                 <input type="tel" class="form-control mt-1" placeholder="Telefone..." id="txt_fone_modal">
+                <p class="text-danger" id="erro_agendar"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-outline-success" id="btn_confirmar_modal">Confirmar</button>
+                <button type="button" class="btn btn-outline-success" id="btn_confirmar_modal" onclick="confirmarAgendamento()">Confirmar</button>
             </div>
             </div>
         </div>

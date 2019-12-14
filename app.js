@@ -11,6 +11,9 @@ var firebaseConfig = {
 };
 
 var mapDeBotoes;
+var contProxAnterior = 0;
+var grafico = null;
+var objAuxAgendamento = { ano : 0, mes : 0, dia : 0, hora : "" };
 
 $(document).ready(function() {
     // Initialize Firebase
@@ -27,6 +30,7 @@ function onLoad() {
     // Configuração da linguagem do moment
     moment.locale('pt-BR');
     mapDeBotoes = obterConficuracoes(obterProximosDias());
+    
 
     $('#spanHorasVoltar').click(function(){ exibirPagina("page01"); });
     $('#spanDashboardVoltar').click(function(){ exibirPagina("page01"); });
@@ -36,7 +40,7 @@ function onLoad() {
 function obterProximosDias() {
     let map = new Map();
     let dias = 7;
-    let qtd_atendimento_hora = 2;
+    let qtd_atendimento_hora = 1;
     for (let i = 0; i < dias; i++) {
         let horas = [];
         for (let j = 0; j < 24; j++) {
@@ -89,6 +93,8 @@ function obterConficuracoes(map) {
             $("#btn_" + value.key).text("✁ " + obj.texto_btn);
             $("#btn_" + value.key).click(function(){ obterHorarios(obj.ano, obj.mes, obj.dia, obj.dia_texto); });
         });
+        // Apagando o Load
+        $("#load_page01").hide();
         // Mapa de botoes ja modificado
         mapDeBotoes = map;
     });
@@ -151,6 +157,42 @@ function montarBotoesDia(key, agendamentosDoDia) {
     }
 }
 
+function obterBotaoHoraAgendamento(hora, tipo, desabilitado, texto_dia, dia, mes, ano) {
+    let classBtn;
+
+    let hoje = moment();
+
+    let dia_hoje = hoje.format('D');
+    if(dia_hoje == dia)
+    {
+        let hora_agora = hoje.format('HH:mm');
+        if(hora_agora > hora)
+        {
+            classBtn = 'class="btn btn-danger btn-block " disabled ';
+        }
+    }
+
+    if(!classBtn) {
+        if(desabilitado) {
+            // vermelho
+            classBtn = 'class="btn btn-danger btn-block " disabled ';
+        }else if(tipo == 1) {
+            // preto
+            classBtn = 'class="btn btn-dark btn-block"';
+        }else {
+            // cinza
+            classBtn = 'class="btn btn-secondary btn-block"';
+        }
+    }
+
+    let btn = '<button type="button" ';
+    btn = btn.concat(" onclick=\"agendar('"+ hora +"', '" + texto_dia + "', '" + dia + "', '" + mes + "', '" + ano + "')\" ");
+    btn = btn.concat(classBtn);
+    btn = btn.concat('>✁ '+ hora +'</button>');
+
+    return btn;
+}
+
 function obterNovoAgendamento(dia, hora, nome, fone) {
     let agendamento = {
         cancelado : false,
@@ -164,34 +206,20 @@ function obterNovoAgendamento(dia, hora, nome, fone) {
     return agendamento;
 }
 
-function obterBotaoHoraAgendamento(hora, tipo, desabilitado, texto_dia, dia, mes, ano) {
-    let classBtn;
-
-    if(desabilitado) {
-        // vermelho
-        classBtn = 'class="btn btn-danger btn-block " disabled ';
-    }else if(tipo == 1) {
-        // preto
-        classBtn = 'class="btn btn-dark btn-block"';
-    }else {
-        // cinza
-        classBtn = 'class="btn btn-secondary btn-block"';
-    }
-
-    let btn = '<button type="button" ';
-    btn = btn.concat(" onclick=\"agendar('"+ hora +"', '" + texto_dia + "', '" + dia + "', '" + mes + "', '" + ano + "')\" ");
-    btn = btn.concat(classBtn);
-    btn = btn.concat('>✁ '+ hora +'</button>');
-
-    return btn;
-}
-
 function agendar(hora, texto_dia, dia, mes, ano){
     $("#txt_nome_modal").val("");
     $("#txt_fone_modal").val("");
     $('#txt_dia_modal').text(texto_dia + " " + hora);
-    $('#btn_confirmar_modal').click(function(){ realizarAgendamento(ano, mes, dia, hora, "", ""); });
+    objAuxAgendamento.ano = ano;
+    objAuxAgendamento.mes = mes;
+    objAuxAgendamento.dia = dia;
+    objAuxAgendamento.hora = hora;
     $('#meuModal').modal('show');
+    $("#erro_agendar").text("");
+}
+
+function confirmarAgendamento() {
+    realizarAgendamento(objAuxAgendamento.ano, objAuxAgendamento.mes, objAuxAgendamento.dia, objAuxAgendamento.hora, "", "");
 }
 
 function realizarAgendamento(ano, mes, dia, hora, nome, fone){
@@ -199,18 +227,26 @@ function realizarAgendamento(ano, mes, dia, hora, nome, fone){
     nome = nome === "" ? $("#txt_nome_modal").val() : nome;
     fone = fone === "" ? $("#txt_fone_modal").val() : fone;
 
-    let novo_Agendamento = obterNovoAgendamento(dia, hora, nome, fone);
+    let erro = false;
+    if(nome.length == 0) {
+        $("#erro_agendar").text("***Informe o Nome***")
+        erro = true;
+    }
 
-    // Referencia para o nó configuracao
-    ref = firebase.database().ref('agendamentos'.concat('/', ano, '/', mes));
+    if(!erro){
+        let novo_Agendamento = obterNovoAgendamento(dia, hora, nome, fone);
 
-    ref.push(novo_Agendamento).then(snapshot => { 
-
-        $('#meuModal').modal('hide');
-        exibirPagina("page01");
-
-        console.log(snapshot);
-    });
+        // Referencia para o nó configuracao
+        ref = firebase.database().ref('agendamentos'.concat('/', ano, '/', mes));
+    
+        ref.push(novo_Agendamento).then(snapshot => { 
+    
+            $('#meuModal').modal('hide');
+            exibirPagina("page01");
+    
+            console.log(snapshot);
+        });
+    }
 }
 
 function exibirPagina(paginaVisivel) {
@@ -229,28 +265,44 @@ function motarGrafico() {
     exibirPagina('divDashboard');
     $("#imagemPrincipal").hide();
 
-    Morris.Donut({
-        element: 'donut-example',
-        data: [
-            {label: "Agendamentos \n Confirmados", value: 39},
-            {label: "Agendamentos \n Cancelados", value: 11},
-            {label: "Agendamentos", value: 50}
-        ],
-        backgroundColor: '#ccc',
-        labelColor: '#6c757d',
-        colors: [
-            '#28a745',
-            '#dc3545',
-            '#6c757d',
-        ],
-        formatter: function (x) { return x + "%"}
-    });
+    if(grafico == null) {
+        grafico = Morris.Donut({
+            element: 'donut-example',
+            data: [
+                {label: "Agendamentos \n Confirmados", value: 39},
+                {label: "Agendamentos \n Cancelados", value: 11},
+                {label: "Agendamentos", value: 50}
+            ],
+            backgroundColor: '#ccc',
+            labelColor: '#6c757d',
+            colors: [
+                '#28a745',
+                '#dc3545',
+                '#6c757d',
+            ],
+            formatter: function (x) { return x + "%"}
+        });
+    }
 
+    montarTableAgendamentos(true, false);
+}
+
+function montarTableAgendamentos(inicial, proximoDia) {
+
+    let data = moment();
+
+    if(!inicial) {
+        if(proximoDia) {
+            contProxAnterior++;
+            data.add(contProxAnterior, 'days');
+        }else {
+            contProxAnterior--;
+            data.add(contProxAnterior, 'days');
+        }
+    }
 
     var table = $('#table_dashboard');
     table.find("tbody tr").remove();
-
-    let data = moment();
 
     $("#text_dashboard").text(data.format('dddd D MMM'))
 
@@ -258,13 +310,21 @@ function motarGrafico() {
     //ref = firebase.database().ref('agendamentos'.concat('/', data.format('D'), '/', data.format('M')));
     ref = firebase.database().ref('agendamentos'.concat('/', data.format('YYYY'), '/', data.format('M')))
     // Obter Dados
-    ref.orderByChild("hora").once('value').then(snapshot => {
+    ref.orderByChild("dia").equalTo(data.format('D')).once('value').then(snapshot => {
         // checa se existe algo no snapshot * ao invez de ver se é null
         if(snapshot.exists()) {
+
+            var array = [];
+
             snapshot.forEach(value => {
-                let current = value.val();
-                table.append('<tr><td>' + current.nome + '</td><td>' + current.hora + '</td></tr>');
+                array.push({nome : value.val().nome, hora : value.val().hora});
             });
+
+            array.sort((a,b) => (a.hora > b.hora) ? 1 : ((b.hora > a.hora) ? -1 : 0));
+
+            for (let index = 0; index < array.length; index++) {
+                table.append('<tr><td>' + array[index].nome + '</td><td>' + array[index].hora + '</td></tr>');
+            }
         }
     }); 
 }
