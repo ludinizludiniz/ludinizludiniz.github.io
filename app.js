@@ -14,6 +14,7 @@ var mapDeBotoes;
 var contProxAnterior = 0;
 var grafico = null;
 var objAuxAgendamento = { ano : 0, mes : 0, dia : 0, hora : "" };
+var refAgendamentosDia = null;
 
 $(document).ready(function() {
     // Initialize Firebase
@@ -22,6 +23,10 @@ $(document).ready(function() {
     $('[data-toggle="offcanvas"], #navToggle').on('click', function () {
         $('.offcanvas-collapse').toggleClass('open')
     })
+
+    $("#btn_salvar_configuracoes").on('click', function () {
+        salvarConfiguracoes();
+    });
     // Iniciais
     onLoad();
 });
@@ -74,6 +79,8 @@ function obterConficuracoes(map) {
             let dia_config = value.val();
 
             $("#checkbox_" + dia_config.descricao).prop( "checked", dia_config.habilitado ).change();
+            $("#select_inicio_" + dia_config.descricao).val(dia_config.hora_inicio);
+            $("#select_fim_" + dia_config.descricao).val(dia_config.hora_fim);
             
             habilitarDesbilitarBtn("btn_" + value.key, dia_config.habilitado);
             if(!dia_config.habilitado) {
@@ -206,7 +213,7 @@ function obterNovoAgendamento(dia, hora, nome, fone) {
     return agendamento;
 }
 
-function agendar(hora, texto_dia, dia, mes, ano){
+function agendar(hora, texto_dia, dia, mes, ano) {
     $("#txt_nome_modal").val("");
     $("#txt_fone_modal").val("");
     $('#txt_dia_modal').text(texto_dia + " " + hora);
@@ -222,7 +229,7 @@ function confirmarAgendamento() {
     realizarAgendamento(objAuxAgendamento.ano, objAuxAgendamento.mes, objAuxAgendamento.dia, objAuxAgendamento.hora, "", "");
 }
 
-function realizarAgendamento(ano, mes, dia, hora, nome, fone){
+function realizarAgendamento(ano, mes, dia, hora, nome, fone) {
 
     nome = nome === "" ? $("#txt_nome_modal").val() : nome;
     fone = fone === "" ? $("#txt_fone_modal").val() : fone;
@@ -243,8 +250,6 @@ function realizarAgendamento(ano, mes, dia, hora, nome, fone){
     
             $('#meuModal').modal('hide');
             exibirPagina("page01");
-    
-            console.log(snapshot);
         });
     }
 }
@@ -301,38 +306,85 @@ function montarTableAgendamentos(inicial, proximoDia) {
         }
     }
 
+    $("#text_dashboard").text(data.format('dddd D MMM'));
+
+    var table = $('#table_dashboard');
+    table.find("tbody tr").remove();
+    var array = [];
+
+    // Referencia para o nó configuracao
+    
+    if(refAgendamentosDia != null) {
+        refAgendamentosDia.off();
+        refAgendamentosDia = null;
+    }
+    refAgendamentosDia = firebase.database().ref('agendamentos'.concat('/', data.format('YYYY'), '/', data.format('M')))
+    // Obter Dados
+    refAgendamentosDia.orderByChild("dia").equalTo(data.format('D')).on('child_added', snapshot => {
+        
+        let obj = {nome : snapshot.val().nome, hora : snapshot.val().hora};
+        array.push(obj);
+
+        montaTable(array);
+    });
+}
+
+function montaTable(array) {
+
     var table = $('#table_dashboard');
     table.find("tbody tr").remove();
 
-    $("#text_dashboard").text(data.format('dddd D MMM'))
+    array.sort((a,b) => (a.hora > b.hora) ? 1 : ((b.hora > a.hora) ? -1 : 0));
 
-    // Referencia para o nó configuracao
-    //ref = firebase.database().ref('agendamentos'.concat('/', data.format('D'), '/', data.format('M')));
-    ref = firebase.database().ref('agendamentos'.concat('/', data.format('YYYY'), '/', data.format('M')))
-    // Obter Dados
-    ref.orderByChild("dia").equalTo(data.format('D')).once('value').then(snapshot => {
-        // checa se existe algo no snapshot * ao invez de ver se é null
-        if(snapshot.exists()) {
-
-            var array = [];
-
-            snapshot.forEach(value => {
-                array.push({nome : value.val().nome, hora : value.val().hora});
-            });
-
-            array.sort((a,b) => (a.hora > b.hora) ? 1 : ((b.hora > a.hora) ? -1 : 0));
-
-            for (let index = 0; index < array.length; index++) {
-                table.append('<tr><td>' + array[index].nome + '</td><td>' + array[index].hora + '</td></tr>');
-            }
-        }
-    }); 
+    for (let index = 0; index < array.length; index++) {
+        table.append('<tr><td>' + array[index].nome + '</td><td>' + array[index].hora + '</td></tr>');
+    }
 }
 
-function montarConfig(){
+function montarConfig() {
     $('.offcanvas-collapse').toggleClass('open')
 
     exibirPagina('divConfig');
     $("#imagemPrincipal").hide();
 
+}
+
+function salvarConfiguracoes() {
+    // Referencia para o nó configuracao
+    ref = firebase.database().ref('configuracao/dia');
+    ref.child("segunda").update({ 
+        habilitado : $('#checkbox_Segunda-feira').prop('checked'),
+        hora_inicio : $("#select_inicio_Segunda-feira").val(),
+        hora_fim : $("#select_fim_Segunda-feira").val()
+    });
+    ref.child("terca").update({ 
+        habilitado : $('#checkbox_Terça-feira').prop('checked'),
+        hora_inicio : $("#select_inicio_Terça-feira").val(),
+        hora_fim : $("#select_fim_Terça-feira").val()
+    });
+    ref.child("quarta").update({ 
+        habilitado : $('#checkbox_Quarta-feira').prop('checked'),
+        hora_inicio : $("#select_inicio_Quarta-feira").val(),
+        hora_fim : $("#select_fim_Quarta-feira").val()
+    });
+    ref.child("quinta").update({ 
+        habilitado : $('#checkbox_Quinta-feira').prop('checked'),
+        hora_inicio : $("#select_inicio_Quinta-feira").val(),
+        hora_fim : $("#select_fim_Quinta-feira").val()
+    });
+    ref.child("sexta").update({ 
+        habilitado : $('#checkbox_Sexta-feira').prop('checked'),
+        hora_inicio : $("#select_inicio_Sexta-feira").val(),
+        hora_fim : $("#select_fim_Sexta-feira").val()
+    });
+    ref.child("sabado").update({ 
+        habilitado : $('#checkbox_Sábado').prop('checked'),
+        hora_inicio : $("#select_inicio_Sábado").val(),
+        hora_fim : $("#select_fim_Sábado").val()
+    });
+    ref.child("domingo").update({ 
+        habilitado : $('#checkbox_Domingo').prop('checked'),
+        hora_inicio : $("#select_inicio_Domingo").val(),
+        hora_fim : $("#select_fim_Domingo").val()
+    });
 }
