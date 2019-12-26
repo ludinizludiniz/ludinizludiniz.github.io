@@ -15,6 +15,7 @@ var contProxAnterior = 0;
 var grafico = null;
 var objAuxAgendamento = { ano : 0, mes : 0, dia : 0, hora : "" };
 var refAgendamentosDia = null;
+var ui = null;
 
 $(document).ready(function() {
     // Initialize Firebase
@@ -40,6 +41,28 @@ function onLoad() {
     $('#spanHorasVoltar').click(function(){ exibirPagina("page01"); });
     $('#spanDashboardVoltar').click(function(){ exibirPagina("page01"); });
     
+    // Initialize the FirebaseUI Widget using Firebase.
+    uiAuth();
+}
+
+function uiAuth() {
+    ui = new firebaseui.auth.AuthUI(firebase.auth());
+    let config = {
+        callbacks: {
+            signInSuccessWithAuthResult: function(authResult) {
+                console.log('authResult : ', authResult);
+                return false;
+            }
+        },
+        signInOptions: [
+            {
+                provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+                defaultCountry: 'BR'
+            }
+        ],
+        signInFlow: 'popup'
+    };
+    ui.start('#firebaseui-auth', config);
 }
 
 function obterProximosDias() {
